@@ -112,8 +112,14 @@ sequenceDiagram
 
 ## Testing
 
-Test are written using pytest. Run test with the virtual environment:
+Test are written using pytest, and test make live requests to a running container. If the container is not running or is unhealthy, pytest will exit with an error.
+
+Run tests with the virtual environment:
 
 ```bash
+# Start the container
+docker compose up -d
+
+# Run the tests
 .venv/bin/pytest
 ```
