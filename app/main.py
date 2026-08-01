@@ -1,23 +1,48 @@
-from fastapi import FastAPI
-from pydantic import BaseModel
+from typing import Annotated
+
+from fastapi import FastAPI, Request
+from fastapi.exceptions import RequestValidationError
+from fastapi.responses import JSONResponse
+from pydantic import BaseModel, Field
 
 
 app = FastAPI(
     title="Data Summary Service",
-    version="0.1.0"
+    version="0.1.0",
 )
+
+
+Count = Annotated[int, Field(ge=0)]
 
 
 class SummaryRequest(BaseModel):
     """Data supplied by a program requesting a summary."""
 
-    data: dict[str, int]
+    data: dict[str, Count]
 
 
 class SummaryResponse(BaseModel):
     """Natural-language summary returned by the service."""
 
     summary: str
+
+
+@app.exception_handler(RequestValidationError)
+async def handle_request_validation_error(
+    _request: Request,
+    _exception: RequestValidationError,
+) -> JSONResponse:
+    """Return a readable response for invalid summary requests."""
+
+    return JSONResponse(
+        status_code=400,
+        content={
+            "error": "Invalid request",
+            "message": (
+                "Provide a JSON body with a 'data' object containing non-negative integer counts."
+            ),
+        },
+    )
 
 
 def build_summary(data: dict[str, int]) -> str:
@@ -41,6 +66,7 @@ def build_summary(data: dict[str, int]) -> str:
 @app.get("/health")
 def health_check() -> dict[str, str]:
     """Confirm that the service is running."""
+
     return {"status": "ok"}
 
 
