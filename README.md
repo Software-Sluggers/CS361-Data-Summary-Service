@@ -94,9 +94,13 @@ sequenceDiagram
     participant build_summary
 
     Client->>create_summary: POST /summary
+    activate create_summary
     create_summary->>build_summary: build_summary(request.data)
+    activate build_summary
     build_summary-->>create_summary: summary string
+    deactivate build_summary
     create_summary-->>Client: 200 OK (SummaryResponse)
+    deactivate create_summary
 ```
 
 **Invalid request:**
@@ -107,7 +111,9 @@ sequenceDiagram
     participant handle_request_validation_error
 
     Client->>handle_request_validation_error: POST /summary (invalid body)
+    activate handle_request_validation_error
     handle_request_validation_error-->>Client: 400 Bad Request
+    deactivate handle_request_validation_error
 ```
 
 ## Testing
