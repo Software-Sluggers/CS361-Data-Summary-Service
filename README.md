@@ -83,6 +83,27 @@ When the request body is invalid, the service will return a 400 Bad Request Erro
 }
 ```
 
+**Example request and response (Python):**
+
+```python
+import requests
+
+url = "http://localhost:5000/summary"
+
+payload = {
+    "data": {
+        "projects": 5,
+        "workspaces": 2
+    }
+}
+
+# Send the request
+payload = requests.post(url, json=payload)
+
+# Print the response
+print(payload["summary"])
+```
+
 ## UML Sequence Diagram
 
 **Valid request:**
